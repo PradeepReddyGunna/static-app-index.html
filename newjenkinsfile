@@ -1,0 +1,9 @@
+node {
+    stage ('clone/checkout') {
+        git branch: 'main', url: 'https://github.com/PradeepReddyGunna/kotiproject12.git'
+    }
+    
+    stage ('deployment of application into web server') {
+        sh ''' cp /var/lib/jenkins/workspace/static-deployment-pipeline/index.html /var/www/html '''
+    }
+}
