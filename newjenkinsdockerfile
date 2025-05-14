@@ -3,19 +3,19 @@ node {
         git branch: 'main', url: 'https://github.com/PradeepReddyGunna/static-application-index.html.git'
     }
     stage ('build the image') {
-        sh ''' docker build -t scripted .'''
+        sh ''' docker build -t static .'''
         sh ''' docker images '''
-        sh ''' docker tag scripted gunnapradeepreddy/scripted:1 '''
+        sh ''' docker tag static gunnapradeepreddy/static:v1 '''
     }
     stage ('push into dockerhub') {
         script {
-            withDockerRegistry(credentialsId: 'docker-hub') {
-                sh ''' docker push gunnapradeepreddy/scripted:1 '''
-            }
-        }
+            withDockerRegistry(credentialsId: 'dockerhub') {
+                sh ''' docker push gunnapradeepreddy/static:v1 '''
+             }
+         }
     }
     stage ('deploy into container') {
-        sh ''' docker pull gunnapradeepreddy/scripted:1 '''
-        sh ''' docker run --name scripted-can -d -p 90:80 gunnapradeepreddy/scripted:1 '''
+        sh ''' docker pull gunnapradeepreddy/static:v1 '''
+        sh ''' docker run --name static-can -d -p 90:80 gunnapradeepreddy/static:v1 '''
     }
 }
