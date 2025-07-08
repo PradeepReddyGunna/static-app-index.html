@@ -1,0 +1,23 @@
+# deployment.yaml file:
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: static-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: static-app
+  template:
+    metadata:
+      labels:
+        app: static-app
+    spec:
+      containers:
+      - name: static-app
+        image: gunnapradeepreddy/static-app:latest
+        ports:
+        - containerPort: 80
+
+
