@@ -1,5 +1,3 @@
-# deployment.yaml file:
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,10 +12,13 @@ spec:
       labels:
         app: static-app
     spec:
+      imagePullSecrets:
+        - name: regcred
       containers:
-      - name: static-app
-        image: gunnapradeepreddy/static-app:latest
-        ports:
-        - containerPort: 80
+        - name: static-app
+          image: gunnapradeepreddy/static-app:latest
+          ports:
+            - containerPort: 80
+
 
 
