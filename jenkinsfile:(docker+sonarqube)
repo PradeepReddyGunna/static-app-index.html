@@ -1,0 +1,32 @@
+node {
+    stage ('Clone/Checkout') {
+        git branch: 'main', url: 'https://github.com/PradeepReddyGunna/static-app-index.html.git'
+    }
+
+    stage ('SonarQube Analysis') {
+        withSonarQubeEnv('SonarQube') {
+            sh '/opt/sonar-scanner/bin/sonar-scanner -Dsonar.projectKey=static-html-app -Dsonar.sources=.'
+        }
+    }
+
+    stage ('Build the image') {
+        sh ''' docker build -t static .'''
+        sh ''' docker images '''
+        sh ''' docker tag static gunnapradeepreddy/static:v1 '''
+    }
+
+    stage ('Push into Docker Hub') {
+        script {
+            withDockerRegistry(credentialsId: 'dockerhub') {
+                sh ''' docker push gunnapradeepreddy/static:v1 '''
+            }
+        }
+    }
+
+    stage ('Deploy into Container') {
+        sh ''' docker stop static-can || true '''
+        sh ''' docker rm static-can || true '''
+        sh ''' docker pull gunnapradeepreddy/static:v1 '''
+        sh ''' docker run --name static-can -d -p 90:80 gunnapradeepreddy/static:v1 '''
+    }
+}
