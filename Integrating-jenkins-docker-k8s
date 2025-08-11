@@ -1,0 +1,40 @@
+pipeline {
+    agent any
+    stages {
+        
+        stage ('checkout/clone') {
+            steps {
+                git branch: 'main', url: 'https://github.com/PradeepReddyGunna/static-app-index.html.git'
+            }
+        }
+        
+        stage ('creating a custom docker image') {
+            steps {
+                sh '''
+                docker build -t static-app .
+                docker images
+                docker tag static-app gunnapradeepreddy/static-app:v1
+                '''
+            }
+        }
+        
+        stage ('push into docker hub') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'dockerhub-creds') {
+                        sh 'docker push gunnapradeepreddy/static-app:v1'
+                    }
+                }
+            }
+        }
+        
+        stage ('deploy to EKS') {
+            steps {
+                sh '''
+                kubectl apply -f deployment.yaml
+                kubectl apply -f service.yaml
+                '''
+            }
+        }
+    }
+}
